@@ -18,4 +18,5 @@ type AccountUsecase interface {
 	Deposit(userID int, amount float64) error
 	Withdraw(userID int, amount float64) error
 	GetBalance(userID int) (float64, error)
+	SimulateConcurrent(userID int, initialBalance, depositAmount, withdrawAmount float64, numGoroutines int) (float64, float64, error) // ← Tambahkan ini
 }

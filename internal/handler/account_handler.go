@@ -38,6 +38,38 @@ func (h *AccountHandler) Deposit(c echo.Context) error {
 	res := response.Success("Deposit berhasil", nil)
 	return c.JSON(res.StatusCode, res)
 }
+func (h *AccountHandler) SimulateConcurrent(c echo.Context) error {
+	userID, err := strconv.Atoi(c.Param("user_id"))
+	if err != nil {
+		res := response.BadRequest("User ID tidak valid")
+		return c.JSON(res.StatusCode, res)
+	}
+
+	var req request.SimulationRequest
+	if err := c.Bind(&req); err != nil {
+		res := response.BadRequest("Format simulasi tidak valid")
+		return c.JSON(res.StatusCode, res)
+	}
+
+	finalBalance, expectedBalance, err := h.usecase.SimulateConcurrent(
+		userID,
+		req.InitialBalance,
+		req.DepositAmount,
+		req.WithdrawAmount,
+		req.NumGoroutines,
+	)
+	
+	if err != nil {
+		res := response.InternalServerError("Gagal menjalankan simulasi")
+		return c.JSON(res.StatusCode, res)
+	}
+
+	res := response.Success("Simulasi selesai", map[string]interface{}{
+		"expected_balance": expectedBalance,
+		"final_balance":    finalBalance,
+	})
+	return c.JSON(res.StatusCode, res)
+}
 
 func (h *AccountHandler) Withdraw(c echo.Context) error {
 	var req request.TransactionRequest

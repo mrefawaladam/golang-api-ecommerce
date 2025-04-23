@@ -16,4 +16,5 @@ func RegisterAccountRoutes(e *echo.Group) {
 	e.POST("/account/:user_id/deposit", handler.Deposit)
 	e.POST("/account/:user_id/withdraw", handler.Withdraw)
 	e.GET("/account/:user_id/balance", handler.GetBalance)
+	e.POST("/account/:user_id/simulate", handler.SimulateConcurrent)
 }
